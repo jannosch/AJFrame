@@ -1,4 +1,4 @@
-package de.sirarthur.math;
+package math.ajvector;
 
 public class Vector extends Vecthur {
 

@@ -1,6 +1,6 @@
 import ajframe.AJFrame;
 import ajframe.components.Component;
-import de.sirarthur.math.PVector;
+import math.ajvector.PVector;
 
 public class Main {
 

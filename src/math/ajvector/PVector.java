@@ -1,4 +1,4 @@
-package de.sirarthur.math;
+package math.ajvector;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;

@@ -3,10 +3,9 @@ package ajframe;
 import ajframe.components.Component;
 import ajframe.components.Holder;
 import ajframe.design.Design;
-import ajframe.design.Designable;
 import ajframe.design.attributes.Fill;
-import de.sirarthur.math.PVector;
-import de.sirarthur.math.Vector;
+import math.ajvector.PVector;
+import math.ajvector.Vector;
 
 import javax.swing.*;
 import java.awt.*;

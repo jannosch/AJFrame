@@ -3,9 +3,9 @@ package ajframe.components;
 import ajframe.design.Design;
 import ajframe.design.Designable;
 import ajframe.design.attributes.Fill;
-import de.sirarthur.math.PVector;
-import de.sirarthur.math.Vecthur;
-import de.sirarthur.math.Vector;
+import math.ajvector.PVector;
+import math.ajvector.Vecthur;
+import math.ajvector.Vector;
 
 import java.awt.*;
 

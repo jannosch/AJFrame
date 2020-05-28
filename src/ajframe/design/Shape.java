@@ -1,8 +1,6 @@
 package ajframe.design;
 
-import ajframe.components.Component;
-import de.sirarthur.math.Vecthur;
-import de.sirarthur.math.Vector;
+import math.ajvector.Vecthur;
 
 public abstract class Shape {
 

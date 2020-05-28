@@ -1,7 +1,7 @@
 package ajframe.design;
 
 import ajframe.components.Component;
-import de.sirarthur.math.Vector;
+import math.ajvector.Vector;
 
 import java.awt.*;
 

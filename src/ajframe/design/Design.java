@@ -2,7 +2,7 @@ package ajframe.design;
 
 import ajframe.components.Component;
 import ajframe.design.attributes.DesignAttribute;
-import de.sirarthur.math.Vector;
+import math.ajvector.Vector;
 
 import java.awt.*;
 import java.util.ArrayList;

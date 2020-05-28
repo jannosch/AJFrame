@@ -1,4 +1,4 @@
-package de.sirarthur.math;
+package math.ajvector;
 
 public abstract class Vecthur implements Cloneable {
 
