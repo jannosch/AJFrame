@@ -5,7 +5,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
-public class PVector implements Vecthur {
+public class PVector extends Vecthur {
 
     private DoubleProperty X, Y;
     private boolean isBoundX, isBoundY;
@@ -346,11 +346,6 @@ public class PVector implements Vecthur {
 
 
     @Override
-    public Vecthur clone() {
-        return new PVector(getX(), getY());
-    }
-
-    @Override
     public int hashCode() {
         String s = getX()+";"+getY();
         return s.hashCode();
@@ -365,6 +360,6 @@ public class PVector implements Vecthur {
             Vector v = (Vector) obj;
             return getX() == v.getX() && getY() == v.getY();
         } else
-            return super.equals(obj);
+            return false;
     }
 }

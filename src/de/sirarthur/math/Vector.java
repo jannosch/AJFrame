@@ -1,6 +1,6 @@
 package de.sirarthur.math;
 
-public class Vector implements Vecthur {
+public class Vector extends Vecthur {
 
     double x, y;
 
@@ -164,11 +164,6 @@ public class Vector implements Vecthur {
 
 
     @Override
-    public Vecthur clone() {
-        return new Vector(x, y);
-    }
-
-    @Override
     public int hashCode() {
         String s = x+";"+y;
         return s.hashCode();
@@ -183,6 +178,6 @@ public class Vector implements Vecthur {
             PVector v = (PVector) obj;
             return getX() == v.getX() && getY() == v.getY();
         } else
-            return super.equals(obj);
+            return false;
     }
 }

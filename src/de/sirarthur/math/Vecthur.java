@@ -1,22 +1,22 @@
 package de.sirarthur.math;
 
-public interface Vecthur {
+public abstract class Vecthur implements Cloneable {
 
-    double angle();
-    double length();
+    public abstract double angle();
+    public abstract double length();
 
     // manipulation methods
-    void add(Vecthur v);
-    void add(double x, double y);
-    void sub(Vecthur v);
-    void sub(double x, double y);
-    void mult(double s);
-    void div(double s);
-    void normalize();
-    void limit(double l);
+    public abstract void add(Vecthur v);
+    public abstract void add(double x, double y);
+    public abstract void sub(Vecthur v);
+    public abstract void sub(double x, double y);
+    public abstract void mult(double s);
+    public abstract void div(double s);
+    public abstract void normalize();
+    public abstract void limit(double l);
 
     // non-altering methods
-    double dot(Vecthur v);
+    public abstract double dot(Vecthur v);
 
     // static methods
     static double dist(Vecthur v1, Vecthur v2) {
@@ -24,32 +24,40 @@ public interface Vecthur {
     }
 
     // getters and setters
-    double getX();
-    double getY();
-    void setX(double x);
-    void setY(double y);
+    public abstract double getX();
+    public abstract double getY();
+    public abstract void setX(double x);
+    public abstract void setY(double y);
 
     // rounded getters
-    int getRdX();
-    int getRdY();
+    public abstract int getRdX();
+    public abstract int getRdY();
 
     // print methods
-    int stdDigits = 2;
+    static int stdDigits = 2;
 
     /**@param n after-comma digits*/
-    void print(int n);
-    void print();
+    public abstract void print(int n);
+    public abstract void print();
 
     /**@param n after-comma digits*/
-    String getPrint(int n);
-    String getPrint();
+    public abstract String getPrint(int n);
+    public abstract String getPrint();
 
     /**@param n after-comma digits*/
-    void printV(int n);
-    void printV();
+    public abstract void printV(int n);
+    public abstract void printV();
 
 
-    Vecthur clone();
-    boolean equals(Object obj);
-    int hashCode();
+    public Vecthur clone() {
+        try {
+            return (Vecthur) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
+
+    public abstract boolean equals(Object obj);
+
+    public abstract int hashCode();
 }
