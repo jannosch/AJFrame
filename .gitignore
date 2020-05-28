@@ -1,2 +1,5 @@
 # Project exclude paths
-/out/
+/out/**
+.DS_Store
+.idea/$PRODUCT_WORKSPACE_FILE$
+.idea/libraries/
