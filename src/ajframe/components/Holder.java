@@ -33,11 +33,15 @@ public class Holder extends Component {
     }
 
     // Returns Component on the chosen Location
-    public Component isOnPosition(Vecthur testPos) {
+    @Override
+    public Component onPosition(Vecthur testPos) {
         for (Component c : components) {
             if (c.isOnPosition(testPos)) {
-
+                return true;
             }
+        }
+        if (super.isOnPosition(testPos)) {
+            return true;
         }
     }
 
