@@ -343,23 +343,4 @@ public class PVector extends Vecthur {
             stdDigits = 0;
         printV(stdDigits);
     }
-
-
-    @Override
-    public int hashCode() {
-        String s = getX()+";"+getY();
-        return s.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof PVector) {
-            PVector v = (PVector) obj;
-            return getX() == v.getX() && getY() == v.getY();
-        } else if (obj instanceof Vector) {
-            Vector v = (Vector) obj;
-            return getX() == v.getX() && getY() == v.getY();
-        } else
-            return false;
-    }
 }

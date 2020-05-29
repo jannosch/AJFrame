@@ -57,7 +57,15 @@ public abstract class Vecthur implements Cloneable {
         }
     }
 
-    public abstract boolean equals(Object obj);
+    public int hashCode() {
+        String s = getX()+";"+getY();
+        return s.hashCode();
+    }
 
-    public abstract int hashCode();
+    public boolean equals(Object obj) {
+        if (obj instanceof Vecthur)
+            return hashCode() == obj.hashCode();
+        else
+            return false;
+    }
 }
