@@ -39,8 +39,9 @@ public class Component {
 
     // Returns true if on Position
     public boolean isOnPosition(Vecthur testPos) {
-        Vector testPosition = new Vector(testPos);
+        Vector testPosition = (Vector) testPos.clone();
         testPos.sub(position.getX(), position.getY());
+        if (testPos.getX() < 0 || testPos.getY() < 0 || testPos.getX() > size.getX() || testPos.getY() > size.getY()) return false;
         return designable.getShape(this).isOnPosition(testPosition, size);
     }
 

@@ -33,15 +33,23 @@ public class Holder extends Component {
     }
 
     // Returns Component on the chosen Location
-    @Override
-    public Component onPosition(Vecthur testPos) {
+    public Component getOnPosition(Vecthur testPos) {
+        // Loops through every inner Component
         for (Component c : components) {
             if (c.isOnPosition(testPos)) {
-                return true;
+                if (c instanceof Holder) {
+                    return ((Holder) c).getOnPosition(testPos);
+                } else {
+                    return c;
+                }
             }
         }
-        if (super.isOnPosition(testPos)) {
-            return true;
+
+        // If no inner Component on Position
+        if (isOnPosition(testPos)) {
+            return this;
+        } else {
+            return null;
         }
     }
 
@@ -71,5 +79,28 @@ public class Holder extends Component {
         callRender(component);
 
         return component;
+    }
+
+    // Returns all Components, but not components of child Components
+    public List<Component> getComponents() {
+        return components;
+    }
+
+    // Returns all Components with child Components
+    public List<Component> getComponents(boolean childComponents) {
+        if (!childComponents) return getComponents();
+
+        List<Component> list = new ArrayList<>();
+        list.add(this);
+
+        for (Component c : components) {
+            list.add(c);
+            if (c instanceof Holder) {
+                list.addAll(((Holder) c).getComponents(true));
+            }
+        }
+
+        return list;
+
     }
 }
