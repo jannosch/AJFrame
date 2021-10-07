@@ -2,7 +2,7 @@ package math.ajvector;
 
 public abstract class Vecthur implements Cloneable {
 
-    public abstract double angle();
+    public abstract double getAngle();
     public abstract double length();
 
     // manipulation methods

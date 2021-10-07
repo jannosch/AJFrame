@@ -1,7 +1,7 @@
 package ajframe.design.attributes;
 
 import ajframe.components.Component;
-import ajframe.design.Shape;
+import ajframe.components.Shape;
 import math.ajvector.Vector;
 
 import java.awt.*;

@@ -3,9 +3,11 @@ package ajframe;
 import ajframe.components.Component;
 import ajframe.components.Holder;
 import ajframe.design.Design;
+import ajframe.design.Theme;
 import ajframe.design.attributes.Fill;
 import ajframe.listener.MouseListener;
-import math.ajvector.PVector;
+import math.ajvector.BVector;
+import math.ajvector.Vecthur;
 import math.ajvector.Vector;
 
 import javax.swing.*;
@@ -20,15 +22,18 @@ public class AJFrame extends Holder {
     private Panel jPanel = new Panel(); // Panel in which everything is Painted
     private Vector offset; // OS-Specific
     private boolean handmadeRender;
+    private boolean shouldStartRender = true;
+    private int resizeArea = 6;
+    private int resizeCornerArea = 10;
 
-    public AJFrame(PVector size) {
-        super(size, new PVector());
+    public AJFrame(BVector size) {
+        super(new BVector(), size);
         init();
     }
 
     private void init() {
-        // Sets Designable
-        designable = new Design(new Fill(new Color(0x252628)));
+        // Sets Theme
+        setTheme(Theme.DARK);
 
         // Sets offset
         /*
@@ -62,16 +67,18 @@ public class AJFrame extends Holder {
     }
 
     @Override
-    protected void callRender(Component component) {
-        renderList.add(component);
-
+    public void callRender() {
         // TODO: Time to frames
-        render();
+        shouldStartRender = true;
     }
 
     public void render() {
-        handmadeRender = true;
-        jPanel.repaint();
+        if (shouldStartRender) {
+            System.out.println("render");
+            handmadeRender = true;
+            jPanel.repaint();
+            shouldStartRender = false;
+        }
     }
 
     // Updates size when scaled
@@ -90,7 +97,7 @@ public class AJFrame extends Holder {
         }
 
         @Override
-        public void paint(Graphics graphics) {
+        public void paintComponent(Graphics graphics) {
             Graphics2D g = (Graphics2D)graphics;
 
             // Updates size
@@ -102,7 +109,7 @@ public class AJFrame extends Holder {
                     RenderingHints.VALUE_ANTIALIAS_ON
             ));
 
-            render(g, new Vector(), designable, !handmadeRender);
+            render(g, new Vector(), !handmadeRender);
 
             handmadeRender = false;
         }
@@ -110,9 +117,29 @@ public class AJFrame extends Holder {
 
 
     @Override
-    public void setSize(PVector size) {
+    public void setSize(BVector size) {
         super.setSize(size);
         jFrame.setSize(size.getRdX() + offset.getRdX(), size.getRdY() + offset.getRdY());
+    }
+
+    @Override
+    public void setResizeable(boolean resizeable) {
+        super.setResizeable(resizeable);
+        jFrame.setResizable(resizeable);
+    }
+
+    public int getResizeArea() {
+        return resizeArea;
+    }
+
+    public void setResizeArea(int resizeArea) {
+        this.resizeArea = resizeArea;
+    }
+
+    // Mouse is always in Frame when this request is done
+    @Override
+    public boolean isOnPosition(Vector testPos) {
+        return true;
     }
 
     private java.awt.event.MouseAdapter mouseAdapter = new MouseAdapter() {
@@ -137,6 +164,8 @@ public class AJFrame extends Holder {
                     ((MouseListener) c).mousePressed(e);
                 }
             }
+
+            render();
         }
 
         @Override
@@ -161,6 +190,8 @@ public class AJFrame extends Holder {
                     ((MouseListener) c).mouseReleased(e);
                 }
             }
+
+            render();
         }
     };
 
@@ -171,19 +202,77 @@ public class AJFrame extends Holder {
         @Override
         public void mouseMoved(MouseEvent e) {
             Component component = getOnPosition(new Vector(e.getX(), e.getY()));
+
             if (component != null) {
+                Cursor cursor = null;
+
+                // If component is resizable
+                if (component.isResizeable()) {
+                    int distanceW = e.getX() - component.getPosition().getRdX();
+                    int distanceN = e.getY() - component.getPosition().getRdY();
+                    int distanceE = component.getSize().getRdX() - (e.getX() - component.getPosition().getRdX());
+                    int distanceS = component.getSize().getRdY() - (e.getY() - component.getPosition().getRdY());
+
+                    if (distanceW < resizeCornerArea && distanceN < resizeCornerArea) {
+                        // NW
+                        cursor = Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR);
+                    } else if (distanceE < resizeCornerArea && distanceN < resizeCornerArea) {
+                        // NE
+                        cursor = Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR);
+                    } else if (distanceE < resizeCornerArea && distanceS < resizeCornerArea) {
+                        // NE
+                        cursor = Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR);
+                    } else if (distanceW < resizeCornerArea && distanceS < resizeCornerArea) {
+                        // NE
+                        cursor = Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR);
+                    } else if (distanceW < resizeArea) {
+                        // W
+                        cursor = Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR);
+                    } else if (distanceN < resizeArea) {
+                        // N
+                        cursor = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
+                    } else if (distanceE < resizeArea) {
+                        // E
+                        cursor = Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
+                    } else if (distanceS < resizeArea) {
+                        // S
+                        cursor = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
+                    }
+
+
+                }
+
+                //TODO: If component get resized dont select it but deselect old one
+                // If new component is hovered
+                if (!component.equals(hoveredComponent)) {
+
+                    // Reset state of previous hovered Component
+                    if (hoveredComponent != null) {
+                        if (hoveredComponent instanceof MouseListener)
+                            ((MouseListener) hoveredComponent).onExited(e);
+                        if (hoveredComponent.getState() == State.HOVERED) hoveredComponent.setState(State.NONE);
+                        else if (hoveredComponent.getState() == State.ACTIVE_HOVERED)
+                            hoveredComponent.setState(State.ACTIVE);
+                    }
+
+                    // Update new hovered Component
+                    hoveredComponent = component;
+                    if (component instanceof MouseListener) ((MouseListener) component).onEntered(e);
+                    if (hoveredComponent.getState() == State.NONE) hoveredComponent.setState(State.HOVERED);
+                    else if (hoveredComponent.getState() == State.ACTIVE)
+                        hoveredComponent.setState(State.ACTIVE_HOVERED);
+                }
+
+
                 if (component instanceof MouseListener) {
                     // Calls onHovered
                     ((MouseListener) component).onHovered(e);
-
-                    // Calls onEntered/onExited
-                    if (!component.equals(hoveredComponent)) {
-                        if (hoveredComponent instanceof MouseListener) ((MouseListener) hoveredComponent).onExited(e);
-                        ((MouseListener) component).onEntered(e);
-                        hoveredComponent = component;
-                        System.out.println(component.getClass().toString());
-                    }
                 }
+
+                if (cursor == null) {
+                    cursor = component.getDesign().getCursor(component);
+                }
+                jFrame.setCursor(cursor);
             }
 
             // Every Component
@@ -192,6 +281,8 @@ public class AJFrame extends Holder {
                     ((MouseListener) c).mouseMoved(e);
                 }
             }
+
+            render();
         }
     };
 }

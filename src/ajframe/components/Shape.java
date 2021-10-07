@@ -1,4 +1,4 @@
-package ajframe.design;
+package ajframe.components;
 
 import math.ajvector.Vecthur;
 

@@ -2,7 +2,7 @@ package math.ajvector;
 
 public class Vector extends Vecthur {
 
-    double x, y;
+    protected double x, y;
 
     // constructors
     /**
@@ -37,10 +37,10 @@ public class Vector extends Vecthur {
     }
 
     // vector property getters
-    public double angle() {
+    public double getAngle() {
         double a;
-        a = Math.atan(y/x);
-        if (x < 0)
+        a = Math.atan(getY()/getX());
+        if (getX() < 0)
             a += Math.PI;
         if (a < 0)
             a = Math.PI*2 + a;
@@ -48,7 +48,7 @@ public class Vector extends Vecthur {
     }
 
     public double length() {
-        return Math.sqrt(x*x+y*y);
+        return Math.sqrt(getX()*getX()+getY()*getY());
     }
 
     // manipulation methods
@@ -100,7 +100,7 @@ public class Vector extends Vecthur {
      * @return double
      */
     public double dot(Vecthur v) {
-        return (x*v.getX() + y*v.getY());
+        return (getX()*v.getX() + getY()*v.getY());
     }
 
     // getters and setters
@@ -122,11 +122,11 @@ public class Vector extends Vecthur {
 
     // rounded getters
     public int getRdX() {
-        return (int) Math.round(x);
+        return (int) Math.round(getX());
     }
 
     public int getRdY() {
-        return (int) Math.round(y);
+        return (int) Math.round(getY());
     }
 
     // print methods
@@ -134,7 +134,7 @@ public class Vector extends Vecthur {
 
     public void print(int n) {
         String s = "(%.2f|%.2f)%n".replaceAll("2", (n>=0?Integer.toString(n):"2"));
-        System.out.printf(s, x, y);
+        System.out.printf(s, getX(), getY());
     }
     public void print() {
         if (stdDigits < 0)
@@ -144,7 +144,7 @@ public class Vector extends Vecthur {
 
     public String getPrint(int n) {
         String s = "(%.2f|%.2f)".replaceAll("2", (n>=0?Integer.toString(n):"2"));
-        return String.format(s, x, y);
+        return String.format(s, getX(), getY());
     }
     public String getPrint() {
         if (stdDigits < 0)
@@ -154,11 +154,16 @@ public class Vector extends Vecthur {
 
     public void printV(int n) {
         String s = "(%.2f|%.2f; α=%.2f*PI; l=%.2f)%n".replaceAll("2", (n>=0?Integer.toString(n):"2"));
-        System.out.printf(s, x, y, angle(), length());
+        System.out.printf(s, getX(), getY(), getAngle(), length());
     }
     public void printV() {
         if (stdDigits < 0)
             stdDigits = 0;
         printV(stdDigits);
+    }
+
+    @Override
+    public Vector clone() {
+        return new Vector(this);
     }
 }

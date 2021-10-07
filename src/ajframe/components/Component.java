@@ -1,9 +1,9 @@
 package ajframe.components;
 
 import ajframe.design.Design;
-import ajframe.design.Designable;
+import ajframe.design.Theme;
 import ajframe.design.attributes.Fill;
-import math.ajvector.PVector;
+import math.ajvector.BVector;
 import math.ajvector.Vecthur;
 import math.ajvector.Vector;
 
@@ -11,70 +11,127 @@ import java.awt.*;
 
 public class Component {
 
-    protected PVector size; // Sets size of Component cannot be null
-    protected PVector position; // Position of Component relative to Holder, if null the position is determined by Layout
-    protected Designable designable = new Design(new Fill(new Color(29, 94, 184))); // Handles the Appearance of Component  // TODO: change
-    protected Holder holder; // Holder will receive call to render
+    protected BVector position; // Position of Component relative to Holder, if null the position is determined by Layout
+    protected BVector size; // Sets size of Component cannot be null
+    protected Design design = new Design(); // Handles the Appearance of Component
+    protected Theme theme = null;
+    protected Shape shape = new Shape.Rect();
+    protected ComponentState state = State.NONE;
+    protected Holder parent; // Holder will receive call to render
+    protected boolean shouldRender = true;
+    protected boolean resizeable = true;
 
     /** Constructors */
-    public Component(PVector size, PVector position) {
-        this.size = size;
+    public Component(BVector position, BVector size) {
         this.position = position;
+        this.size = size;
     }
 
     // Tells the Designable to render and do additional Component specific stuff
-    public void render(Graphics2D g, Vector offset, Designable holdersDesignable, boolean fullRender) {
-        // If has design, use it, if not dann halt des andere
-        if (designable != null) {
-            designable.render(g, offset, this);
-        } else {
-            holdersDesignable.render(g, offset, this);
+    public void render(Graphics2D g, Vector offset, boolean forceRender) {
+        if (shouldRender || forceRender) {
+            design.render(g, offset, this);
+            shouldRender = false;
         }
     }
 
     // Tells holder to Render
     public void callRender() {
-        holder.callRender(this);
+        parent.callRender();
     }
 
     // Returns true if on Position
-    public boolean isOnPosition(Vecthur testPos) {
-        Vector testPosition = (Vector) testPos.clone();
-        testPos.sub(position.getX(), position.getY());
-        if (testPos.getX() < 0 || testPos.getY() < 0 || testPos.getX() > size.getX() || testPos.getY() > size.getY()) return false;
-        return designable.getShape(this).isOnPosition(testPosition, size);
+    public boolean isOnPosition(Vector testPos) {
+        Vector testPosition = testPos.clone();
+        testPosition.sub(position.getX(), position.getY());
+        if (testPosition.getX() < 0 || testPosition.getY() < 0 || testPosition.getX() > size.getX() || testPosition.getY() > size.getY()) return false;
+        return shape.isOnPosition(testPosition, size);
     }
 
-    public Designable getDesignable() {
-        return designable;
+    public Design getDesign() {
+        return design;
     }
 
-    public void setDesignable(Designable designable) {
-        this.designable = designable;
+    // Returns Theme of
+    public Theme getTheme() {
+        if (parent != null) if (theme == null) return parent.getTheme();
+        return theme;
     }
 
-    public Holder getHolder() {
-        return holder;
+    public void setDesign(Design design) {
+        this.design = design;
+        this.design.compile();
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
+        design.compile();
+    }
+
+    public Holder getParent() {
+        return parent;
     }
 
     // Protected because user can mess up something with it
-    protected void setHolder(Holder holder) {
-        this.holder = holder;
+    protected void setParent(Holder parent) {
+        this.parent = parent;
+        this.shouldRender = true;
     }
 
-    public PVector getSize() {
+    public BVector getSize() {
         return size;
     }
 
-    public void setSize(PVector size) {
+    public void setSize(BVector size) {
         this.size = size;
     }
 
-    public PVector getPosition() {
+    public BVector getPosition() {
         return position;
     }
 
-    public void setPosition(PVector position) {
+    public void setPosition(BVector position) {
         this.position = position;
+    }
+
+    public Shape getShape() {
+        return shape;
+    }
+
+    public void setShape(Shape shape) {
+        this.shape = shape;
+    }
+
+    public ComponentState getState() {
+        return state;
+    }
+
+    public void setState(ComponentState state) {
+        this.state = state;
+        shouldRender = true;
+        callRender();
+    }
+
+    public boolean isShouldRender() {
+        return shouldRender;
+    }
+
+    public void setShouldRender(boolean shouldRender) {
+        this.shouldRender = shouldRender;
+    }
+
+    public boolean isResizeable() {
+        return resizeable;
+    }
+
+    public void setResizeable(boolean resizeable) {
+        this.resizeable = resizeable;
+    }
+
+    // ComponentStates
+    public enum State implements ComponentState {
+
+        NONE, HOVERED, PRESSED, ACTIVE, ACTIVE_HOVERED, ACTIVE_PRESSED, DISABLED;
+
     }
 }

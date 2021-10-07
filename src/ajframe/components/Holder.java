@@ -1,7 +1,7 @@
 package ajframe.components;
 
-import ajframe.design.Designable;
-import math.ajvector.PVector;
+import ajframe.design.Theme;
+import math.ajvector.BVector;
 import math.ajvector.Vecthur;
 import math.ajvector.Vector;
 
@@ -12,7 +12,6 @@ import java.util.List;
 public class Holder extends Component {
 
     protected List<Component> components = new ArrayList<>(); // All components
-    protected List<Component> renderList = new ArrayList<>(); // All components which are rendered in next cycle
 
     /**
      * Constructors
@@ -21,19 +20,12 @@ public class Holder extends Component {
      * @param position
      */
 
-    public Holder(PVector size, PVector position) {
-        super(size, position);
-        renderList.add(this);
-    }
-
-    // Calls its holder to render as well
-    protected void callRender(Component component) {
-        renderList.add(component);
-        holder.callRender(this);
+    public Holder(BVector position, BVector size) {
+        super(position, size);
     }
 
     // Returns Component on the chosen Location
-    public Component getOnPosition(Vecthur testPos) {
+    public Component getOnPosition(Vector testPos) {
         // Loops through every inner Component
         for (Component c : components) {
             if (c.isOnPosition(testPos)) {
@@ -55,30 +47,46 @@ public class Holder extends Component {
 
     // Renders itself and child Components
     @Override
-    public void render(Graphics2D g, Vector offset, Designable holdersDesignable, boolean fullRender) {
+    public void render(Graphics2D g, Vector offset, boolean forceRender) {
 
-        if (renderList.contains(this) || fullRender) {
-            fullRender = true;
-            super.render(g, offset, holdersDesignable, fullRender);
+        if (shouldRender || forceRender) {
+            forceRender = true;
+            super.render(g, offset, forceRender);
             components.remove(this);
         }
 
         // Renders every Child if fullRender, else renders renderList
-        for (Component c : (fullRender) ? components : renderList) {
+        for (Component c : components) {
             // Renders every child component
-            renderList.remove(c);
-            c.render(g, offset, (designable != null) ? designable : holdersDesignable, fullRender);
+            c.render(g, offset, shouldRender || forceRender);
         }
 
     }
 
-    // Add's new Component and renders it
+    // Adds new Component and renders it
     public Component add(Component component) {
         components.add(component);
-        component.setHolder(this);
-        callRender(component);
+        component.setParent(this);
+        component.getDesign().compile();
+
+        callRender();
 
         return component;
+    }
+
+    // compiles designs
+    protected void updateTheme() {
+        for (Component component : components) {
+            if (component.getTheme() == null) {
+                component.getDesign().compile();
+            }
+        }
+    }
+
+    @Override
+    public void setTheme(Theme theme) {
+        super.setTheme(theme);
+        updateTheme();
     }
 
     // Returns all Components, but not components of child Components
