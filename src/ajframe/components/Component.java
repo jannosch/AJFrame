@@ -35,7 +35,7 @@ public class Component {
         }
     }
 
-    // Tells holder to Render
+    // Tells holder to Render everything
     public void callRender() {
         parent.callRender();
     }
@@ -46,6 +46,32 @@ public class Component {
         testPosition.sub(position.getX(), position.getY());
         if (testPosition.getX() < 0 || testPosition.getY() < 0 || testPosition.getX() > size.getX() || testPosition.getY() > size.getY()) return false;
         return shape.isOnPosition(testPosition, size);
+    }
+
+    // Resizes one side of component. Value is relative to Axis
+    public void resizeLeft(int amount) {
+        position.add(amount, 0);
+        size.add(-amount, 0);
+        callRender();
+    }
+
+    // Resizes one side of component. Value is relative to Axis
+    public void resizeTop(int amount) {
+        position.add(0, amount);
+        size.add(0, -amount);
+        callRender();
+    }
+
+    // Resizes one side of component. Value is relative to Axis
+    public void resizeRight(int amount) {
+        size.add(amount, 0);
+        callRender();
+    }
+
+    // Resizes one side of component. Value is relative to Axis
+    public void resizeBottom(int amount) {
+        size.add(0, amount);
+        callRender();
     }
 
     public Design getDesign() {
@@ -61,6 +87,7 @@ public class Component {
     public void setDesign(Design design) {
         this.design = design;
         this.design.compile();
+        shouldRender = true;
     }
 
     public void setTheme(Theme theme) {
@@ -84,6 +111,7 @@ public class Component {
 
     public void setSize(BVector size) {
         this.size = size;
+        shouldRender = true;
     }
 
     public BVector getPosition() {
@@ -92,6 +120,7 @@ public class Component {
 
     public void setPosition(BVector position) {
         this.position = position;
+        shouldRender = true;
     }
 
     public Shape getShape() {
